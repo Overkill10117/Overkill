@@ -37,6 +37,9 @@ dependencies {
     compile 'com.mashape.unirest:unirest-java:1.4.9'
     compile 'com.vdurmont:emoji-java:3.2.0'
     compile 'net.objecthunter:exp4j:0.4.8'
+    compile 'com.github.jsimone:webapp-runner:8.5.11.3'
+    task stage(dependsOn: ['build', 'clean'])
+    build.mustRunAfter clean
 }
 
 
