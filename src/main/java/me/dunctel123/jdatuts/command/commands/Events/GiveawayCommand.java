@@ -5,10 +5,12 @@ import me.dunctel123.jdatuts.command.CommandContext;
 import me.dunctel123.jdatuts.command.ICommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Icon;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +44,7 @@ public class GiveawayCommand implements ICommand {
             String[] parts = str.split("\\s+",2);
             try{
                 int sec = Integer.parseInt(parts[0]);
-                String madeby = String.format("Made By %s", ctx.getAuthor().getAsTag());
+                String madeby = String.format("Made By %s", ctx.getMessage().getAuthor().getAsTag());
                 EmbedBuilder embed = EmbedUtils.defaultEmbed()
                         .setTitle(":tada:  **GIVEAWAY!**  :tada:\n")
                         .setDescription((parts.length>1 ? "\u25AB*`"+parts[1]+"`*\u25AB\n" : "")+"React with \uD83C\uDF89 to enter! Time Remaining: "+ secondsToTime(seconds))
@@ -132,7 +134,7 @@ public class GiveawayCommand implements ICommand {
 
                 @Override
                 public void run() {
-                    String madeby = String.format("Made By %s", message.getMember().getUser().getAsTag());
+                    String madeby = String.format("Made By %s", message.getAuthor().getAsTag());
                     while(seconds>5)
                     {EmbedBuilder em = EmbedUtils.defaultEmbed()
                             .setTitle("<:tada:294906617378504704>  **GIVEAWAY!**  <:tada:294906617378504704>\n")
@@ -143,7 +145,8 @@ public class GiveawayCommand implements ICommand {
                         try{Thread.sleep(5000);}catch(Exception e){}
                     }
                     while(seconds>0)
-                    {EmbedBuilder em = EmbedUtils.defaultEmbed()
+                    {
+                        EmbedBuilder em = EmbedUtils.defaultEmbed()
                             .setDescription((item!=null ? "\u25AB*`"+item+"`*\u25AB\n" : "")+"React with \uD83C\uDF89 to enter!\nTime remaining: "+secondsToTime(seconds))
                             .setTitle("<:tada:294906617378504704> **G I V E A W A Y!** <:tada:294906617378504704>\nLAST CHANCE TO ENTER!!!\n")
                             .setFooter(madeby);
@@ -154,21 +157,22 @@ public class GiveawayCommand implements ICommand {
                     message.getChannel().retrieveMessageById(message.getId()).complete().getReactions()
                             .stream().filter(mr -> mr.getReactionEmote().getName().equals("\uD83C\uDF89"))
                             .findAny().ifPresent(mr -> {
-                        List<User> users = new LinkedList<>(mr.getJDA().getUsers());
+                        List<User> users = message.retrieveReactionUsers("\uD83C\uDF89").complete();
                         users.remove(message.getJDA().getSelfUser());
                         String id = users.get((int)(Math.random()*users.size())).getId();
+
 
                         EmbedBuilder em = EmbedUtils.defaultEmbed()
                                 .setDescription((item!=null ? "\u25AB*`"+item+"`*\u25AB\n" : "")+"\nWinner: <@"+id+"> \uD83C\uDF89 in " + message.getGuild().getName())
                                 .setTitle("<:tada:294906617378504704> **GIVEAWAY ENDED!** <:tada:294906617378504704>\n")
                                 .setFooter(madeby);
                         message.editMessage(em.build()).queue();
-                        EmbedBuilder emm = EmbedUtils.defaultEmbed()
-                                .setDescription("Congratulations to <@"+id+">! You won"+(item==null ? "" : " the "+item)+"! in "+ message.getGuild().getName())
-                                .setTitle("<:tada:294906617378504704> **GIVEAWAY ENDED!** <:tada:294906617378504704>\n")
-                                .setFooter(madeby);
-                        message.getChannel().sendMessage(emm.build()).queue();
-                    });
+                            EmbedBuilder emm = EmbedUtils.defaultEmbed()
+                                    .setDescription("Congratulations to <@" + id + ">! You won" + (item == null ? "" : " the " + item) + "! in " + message.getGuild().getName())
+                                    .setTitle("<:tada:294906617378504704> **GIVEAWAY ENDED!** <:tada:294906617378504704>\n")
+                                    .setFooter(madeby);
+                            message.getChannel().sendMessage(emm.build()).queue();
+                        });
                 }
             }.start();
         }

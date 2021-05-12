@@ -3,4 +3,4 @@ build/
 .gradle/
 out/
 .env
-.database.db
+.databases.db

@@ -5,6 +5,8 @@ import me.duncte123.botcommons.BotCommons;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.dunctel123.jdatuts.command.commands.ReactionRoleData;
 import me.dunctel123.jdatuts.command.commands.UtilString;
+import me.dunctel123.jdatuts.database.DatabaseManager;
+import me.dunctel123.jdatuts.database.SQLiteDataSource;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Icon;
 import net.dv8tion.jda.api.entities.Message;
@@ -24,6 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -135,7 +140,8 @@ public class Listener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(@Nonnull GuildMessageReceivedEvent event) {
 
-        String prefix = Config.get("prefix");
+        final long guildId = event.getGuild().getIdLong();
+        String prefix = VeryBadDesign.PREFIXES.computeIfAbsent(guildId, DatabaseManager.INSTANCE::getPrefix);
         String raw = event.getMessage().getContentRaw();
 
         User user = event.getAuthor();
@@ -154,7 +160,7 @@ public class Listener extends ListenerAdapter {
         }
 
         if (raw.startsWith(prefix)) {
-            manager.handle(event);
+            manager.handle(event, prefix);
         }
 
     }

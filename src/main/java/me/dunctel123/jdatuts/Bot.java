@@ -3,6 +3,7 @@ package me.dunctel123.jdatuts;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
+import me.dunctel123.jdatuts.database.DatabaseManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -17,6 +18,7 @@ import java.util.EnumSet;
 public class Bot {
 
     private Bot() throws LoginException {
+        DatabaseManager.INSTANCE.getPrefix(-1);
         WebUtils.setUserAgent("I am a bot");
         EmbedUtils.setEmbedBuilder(
                 () -> new EmbedBuilder()

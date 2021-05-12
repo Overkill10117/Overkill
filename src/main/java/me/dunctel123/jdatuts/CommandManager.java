@@ -3,6 +3,7 @@ package me.dunctel123.jdatuts;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import me.dunctel123.jdatuts.command.CommandContext;
 import me.dunctel123.jdatuts.command.ICommand;
+import me.dunctel123.jdatuts.command.commands.Admin.SetPrefixCommand;
 import me.dunctel123.jdatuts.command.commands.Events.*;
 import me.dunctel123.jdatuts.command.commands.Fun.*;
 import me.dunctel123.jdatuts.command.commands.General.HelpCommand;
@@ -65,6 +66,7 @@ public class CommandManager {
         addCommand(new AnnounceCommand());
         addCommand(new KickCommand());
         addCommand(new ModsCommand());
+        addCommand(new SetPrefixCommand());
 
         addCommand(new JoinCommand());
         addCommand(new PlayCommand());
@@ -101,9 +103,9 @@ public class CommandManager {
         return null;
     }
 
-    void handle(GuildMessageReceivedEvent event) {
+    void handle(GuildMessageReceivedEvent event, String prefix) {
         String[] split = event.getMessage().getContentRaw()
-                .replaceFirst("(?i)" + Pattern.quote(Config.get("prefix")),  "")
+                .replaceFirst("(?i)" + Pattern.quote(prefix),  "")
                 .split("\\s+");
 
         String invoke = split[0].toLowerCase();

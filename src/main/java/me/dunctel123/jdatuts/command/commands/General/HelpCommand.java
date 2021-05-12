@@ -2,6 +2,7 @@ package me.dunctel123.jdatuts.command.commands.General;
 
 import me.dunctel123.jdatuts.CommandManager;
 import me.dunctel123.jdatuts.Config;
+import me.dunctel123.jdatuts.VeryBadDesign;
 import me.dunctel123.jdatuts.command.CommandContext;
 import me.dunctel123.jdatuts.command.ICommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -24,14 +25,18 @@ public class HelpCommand implements ICommand {
         TextChannel channel = ctx.getChannel();
         if (args.isEmpty()) {
             StringBuilder builder = new StringBuilder();
+            String prefix = VeryBadDesign.PREFIXES.get(ctx.getGuild().getIdLong());
 
             builder.append("List of commands\n");
             EmbedBuilder embed = new EmbedBuilder()
                     .setColor(Color.blue)
-                    .setFooter("type !!help [command] for more info");
+                    .setFooter("type ,help [command] for more info");
 
             manager.getCommands().stream().map(ICommand::getName).forEach(
-                    (it) -> builder.append('`').append(Config.get("prefix")).append(it).append("`\n")
+                    (it) -> builder.append('`')
+                            .append(prefix)
+                            .append(it)
+                            .append("`\n")
             );
             embed.setDescription(builder.toString());
             channel.sendMessage(embed.build()).queue();
